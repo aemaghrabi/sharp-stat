@@ -1,0 +1,44 @@
+# Build outputs
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+*.binlog
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+
+# Test results and coverage
+TestResults/
+[Cc]overage/
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# OS cruft
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Demo output data (e.g. `dotnet run ... COM4 cyclic data.csv`)
+*.csv
