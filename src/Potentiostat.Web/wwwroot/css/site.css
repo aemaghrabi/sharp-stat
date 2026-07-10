@@ -368,7 +368,7 @@ a:hover {
 .main {
   flex: 1;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -419,10 +419,23 @@ a:hover {
 
 .charts-area {
   flex: 1;
+  overflow-y: auto;
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.app-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 24px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  box-sizing: border-box;
 }
 
 .charts-grid {
