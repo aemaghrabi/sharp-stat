@@ -1,0 +1,306 @@
+@{
+    ViewData["Title"] = "Potentiostat Console";
+}
+
+<div class="app-shell">
+
+  <!-- ================= SIDEBAR ================= -->
+  <div class="sidebar">
+    <div class="sidebar-title">
+      <div class="app-name">SharpStat Console</div>
+      <div class="app-subtitle">Electrochemical acquisition &amp; control</div>
+    </div>
+
+    <!-- Connection card -->
+    <div class="card">
+      <div class="card-title">Device Connection</div>
+
+      <div class="field">
+        <label class="field-label" for="port-select">Serial Port</label>
+        <select id="port-select" class="select"></select>
+      </div>
+
+      <button id="connect-btn" class="btn">Connect</button>
+
+      <div class="connection-status">
+        <div id="status-dot" class="status-dot"></div>
+        <div id="status-text" class="status-text">Disconnected</div>
+      </div>
+      <div id="device-info-line" class="device-info-line" hidden></div>
+    </div>
+
+    <!-- Technique card -->
+    <div class="card">
+      <div class="card-title">Technique</div>
+      <select id="technique-select" class="select select-technique">
+        <option value="cv">Constant Voltage</option>
+        <option value="ca">Chronoamperometry</option>
+        <option value="cyclic" selected>Cyclic Voltammetry</option>
+        <option value="ls">Linear Sweep</option>
+        <option value="sine">Sinusoidal</option>
+        <option value="square">Square Wave</option>
+      </select>
+    </div>
+
+    <!-- Common parameters -->
+    <div class="card">
+      <div class="card-title">Common Parameters</div>
+
+      <div class="field">
+        <label class="field-label" for="curr-range-select">Current Range</label>
+        <select id="curr-range-select" class="select"></select>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="sample-rate">Sample Rate (Hz)</label>
+          <input id="sample-rate" class="input" type="number" step="1" min="1" value="10" />
+        </div>
+        <div>
+          <label class="field-label" for="quiet-time">Quiet Time (s)</label>
+          <input id="quiet-time" class="input" type="number" step="0.1" min="0" value="0.5" />
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="quiet-value">Quiet Value (V)</label>
+        <input id="quiet-value" class="input" type="number" step="0.001" value="0" />
+      </div>
+    </div>
+
+    <!-- Technique-specific parameters -->
+    <div class="card">
+      <div id="technique-params-title" class="card-title">Parameters</div>
+
+      <div id="params-cv" class="technique-params" data-technique="cv" hidden>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="cv-value">Value (V)</label>
+            <input id="cv-value" class="input" type="number" step="0.001" value="0.5" />
+          </div>
+          <div>
+            <label class="field-label" for="cv-duration">Duration (s)</label>
+            <input id="cv-duration" class="input" type="number" step="0.1" min="0" value="10" />
+          </div>
+        </div>
+      </div>
+
+      <div id="params-ca" class="technique-params" data-technique="ca" hidden>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="ca-step1-duration">Step 1 Duration (s)</label>
+            <input id="ca-step1-duration" class="input" type="number" step="0.1" min="0" value="5" />
+          </div>
+          <div>
+            <label class="field-label" for="ca-step1-value">Step 1 Value (V)</label>
+            <input id="ca-step1-value" class="input" type="number" step="0.001" value="0.3" />
+          </div>
+        </div>
+        <div class="field-row" style="margin-bottom:0">
+          <div>
+            <label class="field-label" for="ca-step2-duration">Step 2 Duration (s)</label>
+            <input id="ca-step2-duration" class="input" type="number" step="0.1" min="0" value="5" />
+          </div>
+          <div>
+            <label class="field-label" for="ca-step2-value">Step 2 Value (V)</label>
+            <input id="ca-step2-value" class="input" type="number" step="0.001" value="-0.3" />
+          </div>
+        </div>
+      </div>
+
+      <div id="params-cyclic" class="technique-params" data-technique="cyclic">
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="cyclic-amplitude">Amplitude (V)</label>
+            <input id="cyclic-amplitude" class="input" type="number" step="0.001" value="0.5" />
+          </div>
+          <div>
+            <label class="field-label" for="cyclic-offset">Offset (V)</label>
+            <input id="cyclic-offset" class="input" type="number" step="0.001" value="0" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="cyclic-period">Period (s)</label>
+            <input id="cyclic-period" class="input" type="number" step="0.1" min="0" value="1" />
+          </div>
+          <div>
+            <label class="field-label" for="cyclic-cycles">Cycles (#)</label>
+            <input id="cyclic-cycles" class="input" type="number" step="1" min="1" value="3" />
+          </div>
+        </div>
+        <div style="margin-bottom:0">
+          <label class="field-label" for="cyclic-shift">Shift (0&ndash;1)</label>
+          <input id="cyclic-shift" class="input" type="number" step="0.05" min="0" max="1" value="0" />
+          <div class="helper-text">0 = start at minimum, 0.5 = start at maximum</div>
+        </div>
+      </div>
+
+      <div id="params-ls" class="technique-params" data-technique="ls" hidden>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="ls-start-value">Start Value (V)</label>
+            <input id="ls-start-value" class="input" type="number" step="0.001" value="-0.5" />
+          </div>
+          <div>
+            <label class="field-label" for="ls-final-value">Final Value (V)</label>
+            <input id="ls-final-value" class="input" type="number" step="0.001" value="0.5" />
+          </div>
+        </div>
+        <div style="margin-bottom:0">
+          <label class="field-label" for="ls-duration">Duration (s)</label>
+          <input id="ls-duration" class="input" type="number" step="0.1" min="0" value="2" />
+        </div>
+      </div>
+
+      <div id="params-sine" class="technique-params" data-technique="sine" hidden>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="sine-amplitude">Amplitude (V)</label>
+            <input id="sine-amplitude" class="input" type="number" step="0.001" value="0.3" />
+          </div>
+          <div>
+            <label class="field-label" for="sine-offset">Offset (V)</label>
+            <input id="sine-offset" class="input" type="number" step="0.001" value="0" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="sine-period">Period (s)</label>
+            <input id="sine-period" class="input" type="number" step="0.1" min="0" value="2" />
+          </div>
+          <div>
+            <label class="field-label" for="sine-cycles">Cycles (#)</label>
+            <input id="sine-cycles" class="input" type="number" step="1" min="1" value="5" />
+          </div>
+        </div>
+        <div style="margin-bottom:0">
+          <label class="field-label" for="sine-shift">Shift (0&ndash;1)</label>
+          <input id="sine-shift" class="input" type="number" step="0.05" min="0" max="1" value="0" />
+        </div>
+      </div>
+
+      <div id="params-square" class="technique-params" data-technique="square" hidden>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="square-amplitude">Amplitude (V)</label>
+            <input id="square-amplitude" class="input" type="number" step="0.001" value="0.1" />
+          </div>
+          <div>
+            <label class="field-label" for="square-step-value">Step Value (V)</label>
+            <input id="square-step-value" class="input" type="number" step="0.001" value="0.005" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="square-start-value">Start Value (V)</label>
+            <input id="square-start-value" class="input" type="number" step="0.001" value="-0.4" />
+          </div>
+          <div>
+            <label class="field-label" for="square-final-value">Final Value (V)</label>
+            <input id="square-final-value" class="input" type="number" step="0.001" value="0.2" />
+          </div>
+        </div>
+        <div style="margin-bottom:0">
+          <label class="field-label" for="square-window">Window (0&ndash;1)</label>
+          <input id="square-window" class="input" type="number" step="0.05" min="0.05" max="1" value="0.2" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Acquisition card -->
+    <div class="card">
+      <div class="card-title">Acquisition</div>
+
+      <button id="start-btn" class="btn btn-success btn-start" disabled>Start Acquisition</button>
+
+      <div style="margin-top:12px">
+        <div class="progress-labels">
+          <span id="sim-time-display">0.0s</span>
+          <span id="total-duration-display">0.0s</span>
+        </div>
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="acquisition-actions">
+        <button id="export-csv-btn" class="btn-secondary" disabled>Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div class="card log-card">
+      <div class="card-title">Event Log</div>
+      <div id="log-entries" class="log-entries"></div>
+    </div>
+
+  </div>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+
+    <div class="status-bar">
+      <div id="main-technique-label" class="status-bar-title">Cyclic Voltammetry</div>
+      <div class="connection-status" style="margin-top:0">
+        <div id="main-status-dot" class="status-dot"></div>
+        <div id="main-status-text" class="status-text">Disconnected</div>
+      </div>
+      <div id="acquiring-badge" class="acquiring-badge">
+        <div class="acquiring-dot"></div>
+        <div class="acquiring-label">ACQUIRING</div>
+      </div>
+      <div id="point-count" class="point-count">0 samples</div>
+    </div>
+
+    <div class="charts-area">
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-card-title">Voltage vs. Time</div>
+            <div class="chart-toolbar">
+              <button id="reset-tv" class="chart-tool-btn">Reset View</button>
+              <button id="export-tv" class="chart-tool-btn">PNG</button>
+            </div>
+          </div>
+          <div class="chart-body">
+            <svg id="chart-tv" class="chart-svg" viewBox="0 0 560 230" width="560" height="230"></svg>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-card-title">Current vs. Time</div>
+            <div class="chart-toolbar">
+              <button id="reset-ti" class="chart-tool-btn">Reset View</button>
+              <button id="export-ti" class="chart-tool-btn">PNG</button>
+            </div>
+          </div>
+          <div class="chart-body">
+            <svg id="chart-ti" class="chart-svg" viewBox="0 0 560 230" width="560" height="230"></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card chart-card-full">
+        <div class="chart-card-header">
+          <div class="chart-card-title">Voltage vs. Current</div>
+          <div class="chart-toolbar">
+            <button id="reset-vi" class="chart-tool-btn">Reset View</button>
+            <button id="export-vi" class="chart-tool-btn">PNG</button>
+          </div>
+        </div>
+        <div class="chart-body chart-body-centered">
+          <svg id="chart-vi" class="chart-svg" viewBox="0 0 560 230" width="560" height="230"></svg>
+        </div>
+      </div>
+
+      <div class="charts-hint">Scroll to zoom &middot; drag to pan &middot; double-click to reset a chart</div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/js/chart.js"></script>
+    <script src="~/js/csv-export.js"></script>
+    <script src="~/js/app.js"></script>
+}
