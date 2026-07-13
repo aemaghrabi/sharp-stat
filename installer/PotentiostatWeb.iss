@@ -36,8 +36,9 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayIcon={app}\{#MyAppExeName}
 ; Shows an acknowledgements page, then requires accepting the non-commercial
-; license before Setup will continue.
-InfoBeforeFile=ACKNOWLEDGEMENTS.txt
+; license before Setup will continue. Inno Setup always renders the built-in
+; License page before an InfoBeforeFile page, so the acknowledgements are
+; inserted as a custom page (see [Code]) ahead of the License page instead.
 LicenseFile=LICENSE.txt
 
 [Languages]
@@ -51,6 +52,9 @@ Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription
 ; bundles managed/native assemblies, not loose content files, so everything under
 ; PublishDir needs to travel together.
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Acknowledgements page content, extracted to {tmp} at runtime for the custom
+; page in [Code] - not installed with the app.
+Source: "ACKNOWLEDGEMENTS.txt"; DestDir: "{tmp}"; Flags: dontcopy
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -59,3 +63,13 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+procedure InitializeWizard;
+var
+  AckText: AnsiString;
+begin
+  ExtractTemporaryFile('ACKNOWLEDGEMENTS.txt');
+  LoadStringFromFile(ExpandConstant('{tmp}\ACKNOWLEDGEMENTS.txt'), AckText);
+  CreateOutputMsgMemoPage(wpWelcome, 'Acknowledgements', 'Please read the following information before continuing.', '', AckText);
+end;
