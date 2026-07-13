@@ -146,7 +146,13 @@
           }],
         },
         options: {
-          parsing: false,
+          // Do NOT set parsing:false here: Chart.js then blindly assumes the
+          // dataset is sorted ascending by x and computes axis min/max from
+          // only the first and last points. That's true for the time-based
+          // charts (x = elapsed time) but false for Voltage-vs-Current,
+          // whose x (voltage) sweeps up and back down during a CV scan --
+          // with parsing left on, Chart.js checks real order and correctly
+          // scans the full dataset for that chart's axis range instead.
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
@@ -269,7 +275,18 @@
     }
 
     resetZoom() {
-      this.chart.resetZoom();
+      // Don't use the zoom plugin's own resetZoom(): it restores whatever
+      // scale range was frozen as "original" the first time the user ever
+      // dragged/zoomed this chart, which for a live-streaming chart (e.g.
+      // panning the Voltage-vs-Current curve mid-sweep) is a stale partial
+      // range, not the full dataset. Clearing the explicit bounds directly
+      // makes Chart.js re-autoscale to the current, complete data instead.
+      const { x, y } = this.chart.options.scales;
+      delete x.min;
+      delete x.max;
+      delete y.min;
+      delete y.max;
+      this.chart.update();
     }
 
     exportPng(filenamePrefix) {
