@@ -1,0 +1,11 @@
+Potentiostat Console - Acknowledgements
+
+This project is developed with support from:
+
+  - EJUST (Egypt-Japan University of Science and Technology)
+  - GCoE (Center of Excellence)
+
+Author: Ahmed Elmaghrabi
+Publisher: IoTech LLC
+
+Please see the license terms on the next page for usage restrictions.

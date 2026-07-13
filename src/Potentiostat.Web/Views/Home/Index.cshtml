@@ -263,7 +263,7 @@
             </div>
           </div>
           <div class="chart-body">
-            <svg id="chart-tv" class="chart-svg" viewBox="0 0 560 230" width="560" height="230"></svg>
+            <canvas id="chart-tv" class="chart-svg"></canvas>
           </div>
         </div>
         <div class="chart-card">
@@ -275,7 +275,7 @@
             </div>
           </div>
           <div class="chart-body">
-            <svg id="chart-ti" class="chart-svg" viewBox="0 0 560 230" width="560" height="230"></svg>
+            <canvas id="chart-ti" class="chart-svg"></canvas>
           </div>
         </div>
       </div>
@@ -288,18 +288,23 @@
             <button id="export-vi" class="chart-tool-btn">PNG</button>
           </div>
         </div>
-        <div class="chart-body chart-body-centered">
-          <svg id="chart-vi" class="chart-svg" viewBox="0 0 560 230" width="560" height="230"></svg>
+        <div class="chart-body">
+          <canvas id="chart-vi" class="chart-svg"></canvas>
         </div>
       </div>
 
-      <div class="charts-hint">Scroll to zoom &middot; drag to pan &middot; double-click to reset a chart</div>
+      <div class="charts-hint">Scroll to zoom &middot; drag to pan &middot; drag an axis to rescale it &middot; double-click to reset a chart</div>
     </div>
 
     <div class="app-footer">
       <div style="height:72px;width:240px;display:flex;align-items:center">
         <img src="~/images/ejust-logo.png" alt="E-JUST logo" style="max-width:100%;max-height:100%;object-fit:contain" />
       </div>
+
+      <div class="app-footer-copyright">
+        &copy; @DateTime.Now.Year <a href="https://iotechglobal.io/" target="_blank" rel="noopener noreferrer">IoTech LCC</a>. All rights reserved.
+      </div>
+
       <div style="height:72px;width:340px;display:flex;align-items:center;justify-content:flex-end">
         <img src="~/images/gcoe-logo.jpg" alt="Graphene Center of Excellence logo" style="max-width:100%;max-height:100%;object-fit:contain" />
       </div>
@@ -309,6 +314,9 @@
 
 @section Scripts {
     <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
+    <script src="~/lib/hammerjs/hammer.min.js"></script>
+    <script src="~/lib/chartjs-plugin-zoom/chartjs-plugin-zoom.min.js"></script>
     <script src="~/js/chart.js"></script>
     <script src="~/js/csv-export.js"></script>
     <script src="~/js/app.js"></script>

@@ -1,6 +1,7 @@
 using System.IO.Ports;
 using IoRodeo.Potentiostat;
 using IoRodeo.Potentiostat.Protocol;
+using IoRodeo.Potentiostat.Simulation;
 using Microsoft.AspNetCore.SignalR;
 using Potentiostat.Web.Hubs;
 using Potentiostat.Web.Models.Dtos;
@@ -13,6 +14,12 @@ namespace Potentiostat.Web.Services;
 /// </summary>
 public sealed class PotentiostatSessionService : IPotentiostatSessionService
 {
+    /// <summary>
+    /// Permanent, always-listed port name that connects to an in-process <see cref="DummyTransport"/>
+    /// instead of real hardware, so the UI can be exercised without a Rodeostat plugged in.
+    /// </summary>
+    public const string DummyPortName = "Simulated Device (no hardware)";
+
     private readonly IHubContext<AcquisitionHub, IAcquisitionClient> _hub;
     private readonly ILogger<PotentiostatSessionService> _logger;
     private readonly SemaphoreSlim _gate = new(1, 1);
@@ -30,11 +37,13 @@ public sealed class PotentiostatSessionService : IPotentiostatSessionService
         _logger = logger;
     }
 
-    public IReadOnlyList<PortInfoDto> ListPorts() =>
-        SerialPort.GetPortNames()
+    public IReadOnlyList<PortInfoDto> ListPorts()
+    {
+        var realPorts = SerialPort.GetPortNames()
             .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
-            .Select(name => new PortInfoDto(name))
-            .ToArray();
+            .Select(name => new PortInfoDto(name));
+        return new[] { new PortInfoDto(DummyPortName) }.Concat(realPorts).ToArray();
+    }
 
     public DeviceStatusDto GetStatus() => _status;
 
@@ -48,7 +57,9 @@ public sealed class PotentiostatSessionService : IPotentiostatSessionService
                 throw new InvalidOperationException("Already connected.");
             }
 
-            var device = new IoRodeo.Potentiostat.Potentiostat(portName);
+            var device = portName == DummyPortName
+                ? new IoRodeo.Potentiostat.Potentiostat(new DummyTransport())
+                : new IoRodeo.Potentiostat.Potentiostat(portName);
             try
             {
                 await device.ConnectAsync(ct).ConfigureAwait(false);

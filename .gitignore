@@ -6,6 +6,9 @@ obj/
 artifacts/
 *.binlog
 
+# Release packaging output (scripts/publish-release.ps1)
+/publish/
+
 # NuGet
 *.nupkg
 *.snupkg
@@ -35,6 +38,8 @@ coverage*.info
 !.vscode/launch.json
 !.vscode/extensions.json
 
+/.claude/
+
 # OS cruft
 Thumbs.db
 Desktop.ini
@@ -42,3 +47,5 @@ Desktop.ini
 
 # Demo output data (e.g. `dotnet run ... COM4 cyclic data.csv`)
 *.csv
+
+*.zip

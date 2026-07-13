@@ -34,9 +34,9 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     charts = {
-      tv: new SvgChart(el('chart-tv'), { xKey: 't', yKey: 'v', xLabel: 'Time (s)', yLabel: 'Voltage (V)', color: '#3E7BD6' }),
-      ti: new SvgChart(el('chart-ti'), { xKey: 't', yKey: 'i', xLabel: 'Time (s)', yLabel: 'Current (µA)', color: '#D97E33' }),
-      vi: new SvgChart(el('chart-vi'), { xKey: 'v', yKey: 'i', xLabel: 'Voltage (V)', yLabel: 'Current (µA)', color: '#8B5CC9' }),
+      tv: new LineChart(el('chart-tv'), { xKey: 't', yKey: 'v', xLabel: 'Time (s)', yLabel: 'Voltage (V)', color: '#3E7BD6' }),
+      ti: new LineChart(el('chart-ti'), { xKey: 't', yKey: 'i', xLabel: 'Time (s)', yLabel: 'Current (µA)', color: '#D97E33' }),
+      vi: new LineChart(el('chart-vi'), { xKey: 'v', yKey: 'i', xLabel: 'Voltage (V)', yLabel: 'Current (µA)', color: '#8B5CC9' }),
     };
 
     wireStaticControls();

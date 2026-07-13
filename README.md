@@ -8,10 +8,16 @@ communicates with the device over newline-delimited JSON at 115200 baud using
 ## Layout
 
 - `src/Potentiostat` — the driver library (`IoRodeo.Potentiostat` namespace)
+- `src/Potentiostat.Web` — self-hosted ASP.NET Core GUI ("Potentiostat Console"):
+  opens a browser to connect, configure, and run a live acquisition
 - `examples/Potentiostat.Demo` — console demo: prints device info, runs a test
   with a progress bar, optionally writes a CSV
 - `tests/Potentiostat.Tests` — xUnit protocol tests against an in-memory fake
   transport (no hardware needed)
+- `tests/Potentiostat.Web.Tests` — xUnit tests for `Potentiostat.Web` (unit
+  conversions, param packing; no hardware needed)
+- `installer/` — Inno Setup script for the Windows installer
+- `scripts/` — release automation (`publish-release.ps1`)
 
 ## Usage
 
@@ -49,12 +55,73 @@ Run the demo:
 dotnet run --project examples/Potentiostat.Demo -- COM3 cyclic data.csv
 ```
 
-Build and test:
+Run the web GUI:
+
+```
+dotnet run --project src/Potentiostat.Web
+```
+
+Build and test (whole solution):
 
 ```
 dotnet build
 dotnet test
 ```
+
+## Building, bundling, and releasing Potentiostat.Web
+
+`Potentiostat.Web` is distributed as a Windows installer that bundles the .NET 8
+runtime, so end users never need to install .NET separately — they just run the
+installer and double-click the app from the Start Menu.
+
+**Prerequisites** (build machine only, not needed by end users):
+- .NET 8 SDK
+- [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`ISCC.exe`), for building the installer
+
+### One-command release
+
+```powershell
+scripts/publish-release.ps1 -Version 1.0.0
+```
+
+This runs `dotnet publish` against the `win-x64-selfcontained` publish profile
+(`src/Potentiostat.Web/Properties/PublishProfiles/win-x64-selfcontained.pubxml`),
+which produces a self-contained, single-file `Potentiostat.Web.exe` — the .NET
+runtime is embedded in the exe itself, alongside a `wwwroot/` folder and
+`appsettings.json` (ASP.NET Core content files can't be embedded into the
+single-file exe, so they travel next to it). The script then compiles
+`installer/PotentiostatWeb.iss` with Inno Setup, producing:
+
+```
+release/PotentiostatConsole-Setup-1.0.0.exe
+```
+
+That one file is the release artifact — hand it to a user, they run it, it
+installs to Program Files with a Start Menu shortcut and uninstaller, and
+launching it opens the browser GUI automatically. If `ISCC.exe` isn't found
+(on `PATH` or in its default install location), the script fails with a clear
+message rather than silently skipping the installer step.
+
+### Steps without the script
+
+Useful for debugging a packaging problem in isolation:
+
+```
+dotnet publish src/Potentiostat.Web -c Release -r win-x64 --self-contained true -p:PublishProfile=win-x64-selfcontained -p:Version=1.0.0 -o publish/win-x64
+ISCC.exe /DMyAppVersion=1.0.0 /DPublishDir=publish/win-x64 installer/PotentiostatWeb.iss
+```
+
+### Verifying a release
+
+1. Confirm `publish/win-x64/Potentiostat.Web.exe` exists alongside `wwwroot/`
+   and `appsettings.json` (self-contained output carries its own runtime —
+   no dependency on a machine-wide .NET install).
+2. Run `release/PotentiostatConsole-Setup-<version>.exe` on a machine without
+   the .NET SDK/runtime installed to confirm it's genuinely self-contained.
+3. From the installed Start Menu shortcut, confirm the browser opens
+   automatically and (with a Rodeostat attached) a short test run completes —
+   see the end-to-end checklist in
+   [`src/Potentiostat.Web/PLAN.md`](src/Potentiostat.Web/PLAN.md#verification).
 
 ## Differences from the Python driver
 

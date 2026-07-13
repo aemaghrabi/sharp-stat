@@ -1,0 +1,38 @@
+Potentiostat Console - License
+
+Copyright (c) IoTech LLC and Ahmed Elmaghrabi. All rights reserved.
+
+This software ("Potentiostat Console") is provided for non-commercial use
+only.
+
+By installing or using this software, you agree to the following terms:
+
+1. NON-COMMERCIAL USE ONLY
+   This software shall not be used, in whole or in part, in any commercial
+   product, service, or offering. Commercial use of any kind is strictly
+   prohibited without a separate written license.
+
+2. NO COPYING
+   You may not copy, distribute, sublicense, publish, or otherwise make
+   this software (or any part of it) available to any third party without
+   the prior written consent of IoTech LLC and Ahmed Elmaghrabi.
+
+3. NO MODIFICATION
+   You may not modify, adapt, translate, reverse engineer, decompile, or
+   create derivative works based on this software without the prior
+   written consent of IoTech LLC and Ahmed Elmaghrabi.
+
+4. NO WARRANTY
+   This software is provided "AS IS", without warranty of any kind,
+   express or implied, including but not limited to the warranties of
+   merchantability, fitness for a particular purpose, and
+   non-infringement. In no event shall the authors or copyright holders
+   be liable for any claim, damages, or other liability arising from the
+   use of this software.
+
+For permissions beyond the scope of this license (including commercial
+licensing, copying, or modification), please contact IoTech LLC (https://iotechglobal.io/) and
+Ahmed Elmaghrabi (a.maghrabi@iotechglobal.io).
+
+By clicking "I accept the agreement" you confirm that you have read and
+agree to be bound by these terms.
