@@ -7,13 +7,22 @@ communicates with the device over newline-delimited JSON at 115200 baud using
 
 ## Layout
 
-- `src/Potentiostat` — the driver library (`IoRodeo.Potentiostat` namespace)
+- `src/Potentiostat` — **deprecated**, the original driver library
+  (`IoRodeo.Potentiostat` namespace); kept for reference/rollback only, no
+  longer referenced by `Potentiostat.Web`/`Potentiostat.Demo`
 - `src/Potentiostat.Web` — self-hosted ASP.NET Core GUI ("Potentiostat Console"):
   opens a browser to connect, configure, and run a live acquisition
 - `examples/Potentiostat.Demo` — console demo: prints device info, runs a test
   with a progress bar, optionally writes a CSV
 - `tests/Potentiostat.Tests` — xUnit protocol tests against an in-memory fake
-  transport (no hardware needed)
+  transport (no hardware needed); still tests the deprecated `src/Potentiostat`
+  library
+
+`Potentiostat.Web` and `Potentiostat.Demo` build against the external
+`SharpStatDriver` project (`IoRodeo.SharpStatDriver` namespace) in a sibling
+repo at `D:\EJUST\potentiostat\software\SharpStatDriver`, rather than
+`src/Potentiostat` above — `SharpStatDriver` is an API-compatible port, so the
+usage sample below applies to both.
 - `tests/Potentiostat.Web.Tests` — xUnit tests for `Potentiostat.Web` (unit
   conversions, param packing; no hardware needed)
 - `installer/` — Inno Setup script for the Windows installer

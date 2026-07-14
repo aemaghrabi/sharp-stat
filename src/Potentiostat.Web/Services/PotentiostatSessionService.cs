@@ -1,7 +1,7 @@
 using System.IO.Ports;
-using IoRodeo.Potentiostat;
-using IoRodeo.Potentiostat.Protocol;
-using IoRodeo.Potentiostat.Simulation;
+using IoRodeo.SharpStatDriver;
+using IoRodeo.SharpStatDriver.Protocol;
+using IoRodeo.SharpStatDriver.Simulation;
 using Microsoft.AspNetCore.SignalR;
 using Potentiostat.Web.Hubs;
 using Potentiostat.Web.Models.Dtos;
@@ -24,7 +24,7 @@ public sealed class PotentiostatSessionService : IPotentiostatSessionService
     private readonly ILogger<PotentiostatSessionService> _logger;
     private readonly SemaphoreSlim _gate = new(1, 1);
 
-    private IoRodeo.Potentiostat.Potentiostat? _device;
+    private IoRodeo.SharpStatDriver.Potentiostat? _device;
     private CancellationTokenSource? _runCts;
     private Task? _runTask;
     private DeviceStatusDto _status = DeviceStatusDto.Disconnected;
@@ -58,8 +58,8 @@ public sealed class PotentiostatSessionService : IPotentiostatSessionService
             }
 
             var device = portName == DummyPortName
-                ? new IoRodeo.Potentiostat.Potentiostat(new DummyTransport())
-                : new IoRodeo.Potentiostat.Potentiostat(portName);
+                ? new IoRodeo.SharpStatDriver.Potentiostat(new DummyTransport())
+                : new IoRodeo.SharpStatDriver.Potentiostat(portName);
             try
             {
                 await device.ConnectAsync(ct).ConfigureAwait(false);
@@ -210,7 +210,7 @@ public sealed class PotentiostatSessionService : IPotentiostatSessionService
     }
 
     private async Task RunTestBackgroundAsync(
-        IoRodeo.Potentiostat.Potentiostat device,
+        IoRodeo.SharpStatDriver.Potentiostat device,
         string firmwareTestName,
         System.Text.Json.Nodes.JsonObject param,
         IProgress<TestProgress> progress,
@@ -254,7 +254,7 @@ public sealed class PotentiostatSessionService : IPotentiostatSessionService
         }
     }
 
-    private IoRodeo.Potentiostat.Potentiostat RequireIdleConnectedDevice()
+    private IoRodeo.SharpStatDriver.Potentiostat RequireIdleConnectedDevice()
     {
         if (_device is null)
         {

@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Potentiostat\Potentiostat.csproj" />
+    <ProjectReference Include="..\..\..\..\..\potentiostat\software\SharpStatDriver\src\SharpStatDriver\SharpStatDriver.csproj" />
   </ItemGroup>
 
 </Project>

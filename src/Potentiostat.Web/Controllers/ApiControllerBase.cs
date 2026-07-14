@@ -1,4 +1,4 @@
-using IoRodeo.Potentiostat;
+using IoRodeo.SharpStatDriver;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Potentiostat.Web.Controllers;

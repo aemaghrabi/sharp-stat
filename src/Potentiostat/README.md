@@ -1,5 +1,10 @@
 # IoRodeo.Potentiostat
 
+> **Deprecated.** `Potentiostat.Demo` and `Potentiostat.Web` now consume the
+> external `SharpStatDriver` project instead (`IoRodeo.SharpStatDriver`
+> namespace, API-compatible) — see the root [README.md](../../README.md).
+> This library is kept in the repo for reference/rollback only.
+
 Async C# driver for the [IO Rodeo Rodeostat](https://iorodeo.com/) open source
 potentiostat — a C# port of the Python driver in `../../python/potentiostat`.
 Targets .NET 8, communicates over newline-delimited JSON at 115200 baud via

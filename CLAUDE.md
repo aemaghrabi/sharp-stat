@@ -17,7 +17,9 @@ Target is net8.0 (builds fine on newer SDKs). Library dependencies:
 
 ## Layout
 
-- `src/Potentiostat` — the library, namespace `IoRodeo.Potentiostat`
+- `src/Potentiostat` — **deprecated**, kept for reference/rollback only; no
+  longer referenced by `Potentiostat.Demo` or `Potentiostat.Web` (see below).
+  Namespace `IoRodeo.Potentiostat`.
   - `Potentiostat.cs` — main device class: async command methods + `RunTestAsync` streaming loop
   - `SerialJsonTransport.cs` — line-based serial I/O (115200 baud, DTR/RTS asserted)
   - `ISerialTransport.cs` — transport interface, implemented by the fake in tests
@@ -25,7 +27,18 @@ Target is net8.0 (builds fine on newer SDKs). Library dependencies:
   - `Ranges.cs` — volt/current range constants + hardware-variant lookup tables
   - `TestResult.cs`, `Exceptions.cs`, `Helpers/CsvSampleWriter.cs`
 - `examples/Potentiostat.Demo` — console demo (device info, progress bar, CSV)
-- `tests/Potentiostat.Tests` — xUnit tests against `FakeTransport` (in-memory scripted device)
+- `tests/Potentiostat.Tests` — xUnit tests against `FakeTransport` (in-memory
+  scripted device); still tests the deprecated `src/Potentiostat` library,
+  unchanged by the driver switch below
+
+`Potentiostat.Demo` and `Potentiostat.Web` now build against the external
+`SharpStatDriver` project (`IoRodeo.SharpStatDriver` namespace) via a
+cross-repo `ProjectReference` into a sibling repo at
+`D:\EJUST\potentiostat\software\SharpStatDriver\src\SharpStatDriver`, not
+`src/Potentiostat` in this repo. `SharpStatDriver` is an API-compatible port of
+`src/Potentiostat` (same class/method shapes, different namespace) — the
+invariants, conventions, and wire protocol documented below apply equally to
+it.
 
 ## Wire protocol (shared with the Python driver and firmware)
 

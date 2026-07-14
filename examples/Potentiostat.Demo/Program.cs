@@ -1,6 +1,6 @@
-using IoRodeo.Potentiostat;
-using IoRodeo.Potentiostat.Helpers;
-using IoRodeo.Potentiostat.Protocol;
+using IoRodeo.SharpStatDriver;
+using IoRodeo.SharpStatDriver.Helpers;
+using IoRodeo.SharpStatDriver.Protocol;
 
 if (args.Length < 1)
 {
