@@ -5,6 +5,50 @@ open source potentiostat (`software/python/potentiostat`). Targets .NET 8 and
 communicates with the device over newline-delimited JSON at 115200 baud using
 `System.IO.Ports`.
 
+## Walkthrough
+
+Everything below runs against the built-in simulated device, so no hardware is needed.
+
+### Web GUI (Potentiostat Console)
+
+![Web GUI walkthrough: connect to the simulated device, configure and run a cyclic voltammetry scan](docs/walkthrough/web-gui.gif)
+
+![Disconnected](docs/walkthrough/web-1-disconnected.png)
+
+*1. Start screen: pick a serial port (the simulated device is always listed) and connect.*
+
+![Connected](docs/walkthrough/web-2-connected.png)
+
+*2. Connected: the device variant, firmware and hardware versions are shown in the sidebar.*
+
+![Configured](docs/walkthrough/web-3-configured.png)
+
+*3. Choose a technique (here Cyclic Voltammetry) and set its parameters and the sample rate.*
+
+![Running](docs/walkthrough/web-4-running.png)
+
+*4. Live acquisition: samples stream into the voltage-time, current-time and voltage-current charts while a progress bar tracks the run.*
+
+![Done](docs/walkthrough/web-5-done.png)
+
+*5. Finished run: the full cyclic voltammogram is ready to zoom, export as PNG, or save as CSV.*
+
+### Library tests and simulated device (terminal)
+
+![Terminal walkthrough: dotnet test, then a simulated cyclic run](docs/walkthrough/terminal-tests.gif)
+
+![dotnet test](docs/walkthrough/terminal-1-tests.png)
+
+*1. `dotnet test`: the protocol and simulation tests all pass against the in-memory fake and simulated transports.*
+
+![Simulated device](docs/walkthrough/terminal-2-simulated-device.png)
+
+*2. Connecting to the simulated Rodeostat, listing its techniques and streaming a cyclic run.*
+
+![Voltammogram](docs/walkthrough/terminal-3-voltammogram.png)
+
+*3. The simulated cyclic voltammogram and applied waveform from the streamed samples.*
+
 ## Layout
 
 - `src/Potentiostat` — **deprecated**, the original driver library
